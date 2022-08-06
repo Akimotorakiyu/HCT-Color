@@ -49,3 +49,24 @@ export function getHctColor(hctPercent: TColorHCT) {
 
   return color
 }
+
+export function calcHctColorAndToRgba(
+  hctPercent: TColorHCT,
+  cacheMap?: Map<
+    `${number}-${number}-${number}`,
+    readonly [number, number, number, number]
+  >,
+) {
+  const key = `${Math.round(hctPercent[0] * 360 * 1)}-${Math.round(
+    hctPercent[1] * 100 * 1,
+  )}-${Math.round(hctPercent[2] * 100 * 1.6)}` as const
+
+  const cached = cacheMap?.get(key)
+  if (cached) {
+    return cached
+  }
+  const hctColor = getHctColor(hctPercent)
+  const value = rgbaFromHct(hctColor)
+  cacheMap?.set(key, value)
+  return value
+}

@@ -22,7 +22,7 @@ export const HuePicker = defineFunctionComponent(
               }}
               imageBitmapRender={(imageData, width, height) => {
                 for (let x = 0; x < width; x++) {
-                  const color = getHctColor([x / height, 1, 0.6, 1])
+                  const color = getHctColor([x / width, 1, 0.6, 1])
                   for (let y = 0; y < height; y++) {
                     const i = width * y * 4 + x * 4
 

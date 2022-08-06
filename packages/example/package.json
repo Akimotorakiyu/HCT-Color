@@ -1,0 +1,27 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "vite --host",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "postcss": "^8.4.6",
+    "postcss-nested": "^5.0.6",
+    "@vitejs/plugin-vue": "^3.0.0",
+    "@vitejs/plugin-vue-jsx": "^2.0.0",
+    "@vue/compiler-sfc": "^3.2.37",
+    "vite": "^3.0.0",
+    "vite-plugin-windicss": "^1.8.7",
+    "windicss": "^3.5.6"
+  },
+  "dependencies": {
+    "@template/template": "workspace:*",
+    "vue": "^3.2.29"
+  }
+}

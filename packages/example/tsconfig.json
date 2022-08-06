@@ -1,0 +1,7 @@
+{
+  "extends": "./../../tsconfig.dom.base.json",
+  "include": ["./src"],
+  "compilerOptions": {
+    "jsx": "preserve"
+  }
+}

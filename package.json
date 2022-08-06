@@ -1,0 +1,31 @@
+{
+  "name": "template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "husky": "^7.0.2",
+    "mkcert": "^1.5.0",
+    "prettier": "^2.6.2",
+    "pretty-quick": "^3.1.1",
+    "typescript": "^4.7.2",
+    "zx": "^6.2.3"
+  },
+  "scripts": {
+    "prepare": "husky install && pnpm run mkcert",
+    "serve": "pnpm --filter=./packages/example run serve",
+    "serve-react": "pnpm --filter=./packages/example-react run serve",
+    "build": "pnpm --filter=./packages/example run build",
+    "dev": "pnpm --filter=./packages/example-node run dev",
+    "dev-fass": "pnpm --filter=./packages/example-fass-node run dev",
+    "mkcert": "mkcert create-cert --ca-key cert/ca.key --ca-cert cert/ca.crt --validity 666 --key cert/temp/cert.key --cert cert/temp/cert.crt --domains \"localhost,127.0.0.1,0.0.0.0\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^17.0.25"
+  }
+}

@@ -110,6 +110,10 @@ export const CanvasPanel = defineFunctionComponent(
                 offsetY / canvas.clientHeight,
               ])
             }}
+            style={{
+              'background-image':
+                'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADBJREFUOE9jfPbs2X8GPEBSUhKfNAPjqAHDIgz+//+PNx08f/4cfzoYNYCBceiHAQC5flV5JzgrxQAAAABJRU5ErkJggg==")',
+            }}
           ></canvas>
         )
       },

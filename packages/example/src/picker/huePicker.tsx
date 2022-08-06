@@ -1,6 +1,6 @@
 import { defineFunctionComponent } from '../func/defineFunctionComponent'
 import { Ref } from 'vue'
-import { getHctColor, TColorHCT, EColorHCT } from '../hct'
+import { getHctColor, TColorHCT } from '../hct'
 
 import { CanvasPanel } from '../canvasPanel'
 import {

@@ -1,7 +1,6 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
-import { getGreeting } from '@template/template'
 import { computed, ref, Ref } from 'vue'
-import { TColorHCT, EColorHCT, getHctColor, rgbaFromHct } from './hct'
+import { TColorHCT, getHctColor, rgbaFromHct } from './hct'
 import { ChromaTonePicker } from './picker/chromaTone'
 import { AlphaPicker } from './picker/alphaPicker'
 import { HuePicker } from './picker/huePicker'
@@ -35,8 +34,8 @@ export const ColorPicker = defineFunctionComponent(() => {
   return {
     render() {
       return (
-        <div class="h-full">
-          <div class="h-full grid grid-cols-6 grid-rows-6 gap-2">
+        <div>
+          <div class="h-80 w-80 grid grid-cols-6 grid-rows-6 gap-2">
             <div class="col-span-5 row-span-5 shadow-gray-400 shadow-sm">
               <ChromaTonePicker color={color}></ChromaTonePicker>
             </div>
@@ -51,7 +50,7 @@ export const ColorPicker = defineFunctionComponent(() => {
             </div>
           </div>
           <div>
-            <div class="flex justify-center ">
+            <div class="flex justify-center mt-3">
               hct(
               <span class="inline-block w-8 text-right">
                 {Math.round(color.value[0] * 360)},
@@ -81,9 +80,28 @@ export const App = defineFunctionComponent(() => {
         <div>
           <h1 class="flex justify-center leading-9">HCT Color Picker</h1>
           <div class="flex justify-center">
-            <div class=" h-80 w-80">
-              <ColorPicker></ColorPicker>
-            </div>
+            <ColorPicker></ColorPicker>
+          </div>
+          <div class="flex justify-center">
+            <a
+              href="https://github.com/Akimotorakiyu/HCT-Color"
+              target="_blank"
+              class="text-blue-300 mt-3"
+            >
+              Github
+            </a>
+          </div>
+          <div class="flex justify-center">
+            <span class=" text-gray-400">
+              use{' '}
+              <a
+                href="https://github.com/material-foundation/material-color-utilities"
+                target="_blank"
+                class="text-blue-300"
+              >
+                @material/material-color-utilities
+              </a>
+            </span>
           </div>
         </div>
       )

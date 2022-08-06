@@ -1,5 +1,5 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 
 function renderData(context2D: CanvasRenderingContext2D, imageData: ImageData) {
   context2D.putImageData(imageData, 0, 0)
@@ -17,7 +17,7 @@ export const CanvasPanel = defineFunctionComponent(
       width: number,
       height: number,
     ) => ImageData
-    onMove?: (x: number, y: number) => void
+    onMove: (x: number, y: number) => void
   }) => {
     const { imageBitmapRender, onMove } = props
     const canvas = ref<HTMLCanvasElement>()
@@ -25,19 +25,30 @@ export const CanvasPanel = defineFunctionComponent(
       return canvas.value?.getContext('2d')
     })
 
-    watch(context2D, () => {
+    const updater = () => {
       if (context2D.value) {
         if (imageBitmapRender) {
           const { width, height } = context2D.value.canvas
           const imageData = context2D.value.createImageData(width, height)
+          const s = performance.now()
           renderData(
             context2D.value,
             imageBitmapRender(imageData, width, height),
           )
+
+          console.log(performance.now() - s)
         } else {
           clearContext(context2D.value)
         }
       }
+    }
+
+    watch(context2D, () => {
+      updater()
+    })
+
+    watchEffect(() => {
+      updater()
     })
 
     return {

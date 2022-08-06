@@ -1,11 +1,17 @@
 import { defineFunctionComponent } from '../func/defineFunctionComponent'
-import { Ref } from 'vue'
+import { computed, Ref } from 'vue'
 import { getHctColor, rgbaFromHct, TColorHCT, EColorHCT } from '../hct'
 
 import { CanvasPanel } from '../canvasPanel'
 
 export const AlphaPicker = defineFunctionComponent(
   ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
+    const rgbaColor = computed(() => {
+      const hctColor = getHctColor(color.value)
+      const rgbaColor = rgbaFromHct(hctColor)
+      return rgbaColor
+    })
+
     return {
       render() {
         return (
@@ -18,9 +24,7 @@ export const AlphaPicker = defineFunctionComponent(
               })
             }}
             imageBitmapRender={(imageData, width, height) => {
-              const color = getHctColor([0, 0.6, 0.7, 1])
-              const argb = rgbaFromHct(color)
-              console.log(argb)
+              const argb = rgbaColor.value
 
               for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {

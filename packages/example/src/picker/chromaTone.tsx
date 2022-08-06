@@ -1,6 +1,6 @@
 import { defineFunctionComponent } from '../func/defineFunctionComponent'
-import { Ref } from 'vue'
-import { getHctColor, TColorHCT, EColorHCT } from '../hct'
+import { computed, Ref } from 'vue'
+import { getHctColor, TColorHCT, EColorHCT, rgbaFromHct } from '../hct'
 
 import { CanvasPanel } from '../canvasPanel'
 import {
@@ -12,6 +12,12 @@ import {
 
 export const ChromaTonePicker = defineFunctionComponent(
   ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
+    const rgbaColor = computed(() => {
+      const hctColor = getHctColor(color.value)
+      const rgbaColor = rgbaFromHct(hctColor)
+      return rgbaColor
+    })
+
     return {
       render() {
         return (
@@ -28,8 +34,13 @@ export const ChromaTonePicker = defineFunctionComponent(
                 for (let x = 0; x < width; x++) {
                   const i = width * y * 4 + x * 4
 
-                  const color = getHctColor([0, x / width, y / height, 1])
-                  const argb = color.toInt()
+                  const hctColor = getHctColor([
+                    color.value[0],
+                    x / width,
+                    y / height,
+                    1,
+                  ])
+                  const argb = hctColor.toInt()
 
                   imageData.data[i + 0] = redFromArgb(argb) // R value
                   imageData.data[i + 1] = greenFromArgb(argb) // G value

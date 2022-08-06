@@ -1,7 +1,12 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
 import { getGreeting } from '@template/template'
 import { computed, ref, watch } from 'vue'
-import { getModePixelColor, getModePixelColorXY } from './hct'
+import {
+  getHctColor,
+  getModePixelColor,
+  getModePixelColorXY,
+  rgbaFromHct,
+} from './hct'
 import {
   alphaFromArgb,
   blueFromArgb,
@@ -64,11 +69,11 @@ export const ColorPickerZ = defineFunctionComponent(() => {
       return (
         <CanvasPanel
           imageBitmapRender={(imageData, width, height) => {
-            for (let y = 0; y < height; y++) {
-              for (let x = 0; x < width; x++) {
+            for (let x = 0; x < width; x++) {
+              const color = getModePixelColor('tone', x / height)
+              for (let y = 0; y < height; y++) {
                 const i = width * y * 4 + x * 4
 
-                const color = getModePixelColor('tone', y / height)
                 const argb = color.toInt()
 
                 imageData.data[i + 0] = redFromArgb(argb) // R value
@@ -112,15 +117,46 @@ export const ColorPickerXY = defineFunctionComponent(() => {
   }
 })
 
+export const ColorPickerAlpha = defineFunctionComponent(() => {
+  return {
+    render() {
+      return (
+        <CanvasPanel
+          imageBitmapRender={(imageData, width, height) => {
+            const color = getHctColor([0, 0.6, 0.7, 1])
+            const argb = rgbaFromHct(color)
+            console.log(argb)
+
+            for (let y = 0; y < height; y++) {
+              for (let x = 0; x < width; x++) {
+                const i = width * y * 4 + x * 4
+
+                imageData.data[i + 0] = argb[0] // R value
+                imageData.data[i + 1] = argb[1] // G value
+                imageData.data[i + 2] = argb[2] // B value
+                imageData.data[i + 3] = (y / height) * 255 // A value
+              }
+            }
+            return imageData
+          }}
+        ></CanvasPanel>
+      )
+    },
+  }
+})
+
 export const ColorPicker = defineFunctionComponent(() => {
   return {
     render() {
       return (
-        <div class="h-full flex">
-          <div class="flex-1">
+        <div class="h-full grid grid-cols-12 grid-rows-6">
+          <div class="col-span-11 row-span-5">
             <ColorPickerXY></ColorPickerXY>
           </div>
-          <div class="w-10 ">
+          <div class="col-span-1 row-span-5">
+            <ColorPickerAlpha></ColorPickerAlpha>
+          </div>
+          <div class="col-span-11 row-span-1 ">
             <ColorPickerZ></ColorPickerZ>
           </div>
         </div>

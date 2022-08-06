@@ -1,4 +1,10 @@
-import { Hct } from '@material/material-color-utilities'
+import {
+  alphaFromArgb,
+  blueFromArgb,
+  greenFromArgb,
+  Hct,
+  redFromArgb,
+} from '@material/material-color-utilities'
 
 type TColorHCT = [R: number, G: number, B: number, A: number]
 
@@ -8,7 +14,18 @@ function getChanel(start: number, end: number, percent: number) {
   return res
 }
 
-function getHctColor(hctPercent: TColorHCT) {
+export function rgbaFromHct(color: Hct) {
+  const argb = color.toInt()
+
+  return [
+    redFromArgb(argb),
+    greenFromArgb(argb),
+    blueFromArgb(argb),
+    alphaFromArgb(argb),
+  ]
+}
+
+export function getHctColor(hctPercent: TColorHCT) {
   const hue = getChanel(0, 360, hctPercent[0])
   const chroma = getChanel(0, 100, hctPercent[1])
   const tone = getChanel(0, 100, hctPercent[2])
@@ -18,12 +35,14 @@ function getHctColor(hctPercent: TColorHCT) {
   return color
 }
 
-type TMode = 'tone' | 'hue' | 'chroma'
+type TMode = 'tone' | 'hue' | 'chroma' | 'alpha'
 
 export function getModePixelColor(mode: TMode, percentX: number) {
   switch (mode) {
     case 'tone':
       return getHctColor([percentX, 1, 0.6, 1])
+    case 'alpha':
+      return getHctColor([1, 1, 0.6, percentX])
 
       break
 

@@ -1,7 +1,13 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
 import { getGreeting } from '@template/template'
 import { computed, ref, watch } from 'vue'
-import { getZModePixelColor } from './hct'
+import { getModePixelColor, getModePixelColorXY } from './hct'
+import {
+  alphaFromArgb,
+  blueFromArgb,
+  greenFromArgb,
+  redFromArgb,
+} from '@material/material-color-utilities'
 
 export function renderData(
   context2D: CanvasRenderingContext2D,
@@ -62,12 +68,13 @@ export const ColorPickerZ = defineFunctionComponent(() => {
               for (let x = 0; x < width; x++) {
                 const i = width * y * 4 + x * 4
 
-                const color = getZModePixelColor(y / height, 'Tone')
+                const color = getModePixelColor('tone', y / height)
+                const argb = color.toInt()
 
-                imageData.data[i + 0] = color[0] // R value
-                imageData.data[i + 1] = color[1] // G value
-                imageData.data[i + 2] = color[2] // B value
-                imageData.data[i + 3] = color[3] // A value
+                imageData.data[i + 0] = redFromArgb(argb) // R value
+                imageData.data[i + 1] = greenFromArgb(argb) // G value
+                imageData.data[i + 2] = blueFromArgb(argb) // B value
+                imageData.data[i + 3] = alphaFromArgb(argb) // A value
               }
             }
             return imageData
@@ -88,12 +95,13 @@ export const ColorPickerXY = defineFunctionComponent(() => {
               for (let x = 0; x < width; x++) {
                 const i = width * y * 4 + x * 4
 
-                const color = getZModePixelColor(x / width, 'Tone')
+                const color = getModePixelColorXY('tone', x / width, y / height)
+                const argb = color.toInt()
 
-                imageData.data[i + 0] = color[0] // R value
-                imageData.data[i + 1] = color[1] // G value
-                imageData.data[i + 2] = color[2] // B value
-                imageData.data[i + 3] = color[3] // A value
+                imageData.data[i + 0] = redFromArgb(argb) // R value
+                imageData.data[i + 1] = greenFromArgb(argb) // G value
+                imageData.data[i + 2] = blueFromArgb(argb) // B value
+                imageData.data[i + 3] = alphaFromArgb(argb) // A value
               }
             }
             return imageData

@@ -1,12 +1,6 @@
-import {
-  alphaFromArgb,
-  blueFromArgb,
-  greenFromArgb,
-  Hct,
-  redFromArgb,
-} from '@material/material-color-utilities'
+import { Hct } from '@material/material-color-utilities'
 
-type TColorRGBA = [R: number, G: number, B: number, A: number]
+type TColorHCT = [R: number, G: number, B: number, A: number]
 
 function getChanel(start: number, end: number, percent: number) {
   const length = end - start
@@ -14,29 +8,43 @@ function getChanel(start: number, end: number, percent: number) {
   return res
 }
 
-function getZModePixelColorWithTone(percent: number) {
-  const color = Hct.from(0, 0, getChanel(0, 100, percent))
+function getHctColor(hctPercent: TColorHCT) {
+  const hue = getChanel(0, 360, hctPercent[0])
+  const chroma = getChanel(0, 100, hctPercent[1])
+  const tone = getChanel(0, 100, hctPercent[2])
 
-  const argb = color.toInt()
+  const color = Hct.from(hue, chroma, tone)
 
-  return [
-    redFromArgb(argb),
-    greenFromArgb(argb),
-    blueFromArgb(argb),
-    alphaFromArgb(argb),
-  ] as TColorRGBA
+  return color
 }
 
-export function getZModePixelColor(percent: number, mode: 'Tone') {
+type TMode = 'tone' | 'hue' | 'chroma'
+
+export function getModePixelColor(mode: TMode, percentX: number) {
   switch (mode) {
-    case 'Tone':
-      return getZModePixelColorWithTone(percent)
+    case 'tone':
+      return getHctColor([percentX, 1, 0.6, 1])
 
       break
 
     default:
       break
   }
+  return Hct.fromInt(0)
+}
 
-  return [255, 255, 255, 255] as TColorRGBA
+export function getModePixelColorXY(
+  mode: TMode,
+  percentX: number,
+  percentY: number,
+) {
+  switch (mode) {
+    case 'tone':
+      return getHctColor([0, percentX, percentY, 1])
+      break
+
+    default:
+      break
+  }
+  return Hct.fromInt(0)
 }

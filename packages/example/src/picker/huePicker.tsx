@@ -11,18 +11,14 @@ import {
 } from '@material/material-color-utilities'
 
 export const HuePicker = defineFunctionComponent(
-  ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
+  ({ color }: { color: Ref<TColorHCT> }) => {
     return {
       render() {
         return (
           <div class="h-full relative">
             <CanvasPanel
               onMove={(x, y) => {
-                color.value.forEach((value, index) => {
-                  if (modes.includes(index)) {
-                    color.value[index] = x
-                  }
-                })
+                color.value[0] = x
               }}
               imageBitmapRender={(imageData, width, height) => {
                 for (let x = 0; x < width; x++) {

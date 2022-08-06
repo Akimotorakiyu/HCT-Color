@@ -1,11 +1,11 @@
 import { defineFunctionComponent } from '../func/defineFunctionComponent'
 import { computed, Ref } from 'vue'
-import { getHctColor, rgbaFromHct, TColorHCT, EColorHCT } from '../hct'
+import { getHctColor, rgbaFromHct, TColorHCT } from '../hct'
 
 import { CanvasPanel } from '../canvasPanel'
 
 export const AlphaPicker = defineFunctionComponent(
-  ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
+  ({ color }: { color: Ref<TColorHCT> }) => {
     const rgbaColor = computed(() => {
       const hctColor = getHctColor(color.value)
       const rgbaColor = rgbaFromHct(hctColor)
@@ -17,11 +17,7 @@ export const AlphaPicker = defineFunctionComponent(
         return (
           <CanvasPanel
             onMove={(x, y) => {
-              color.value.forEach((value, index) => {
-                if (modes.includes(index)) {
-                  color.value[index] = y
-                }
-              })
+              color.value[3] = y
             }}
             imageBitmapRender={(imageData, width, height) => {
               const argb = rgbaColor.value

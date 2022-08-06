@@ -38,29 +38,34 @@ export const ColorPicker = defineFunctionComponent(() => {
         <div class="h-full">
           <div class="h-full grid grid-cols-6 grid-rows-6 gap-2">
             <div class="col-span-5 row-span-5 shadow-gray-400 shadow-sm">
-              <ChromaTonePicker
-                color={color}
-                modes={[EColorHCT.chroma, EColorHCT.tone]}
-              ></ChromaTonePicker>
+              <ChromaTonePicker color={color}></ChromaTonePicker>
             </div>
             <div class="col-span-1 row-span-5 shadow-gray-400 shadow-sm">
-              <AlphaPicker
-                color={color}
-                modes={[EColorHCT.alpha]}
-              ></AlphaPicker>
+              <AlphaPicker color={color}></AlphaPicker>
             </div>
             <div class="col-span-5 row-span-1 shadow-gray-400 shadow-sm">
-              <HuePicker color={color} modes={[EColorHCT.hue]}></HuePicker>
+              <HuePicker color={color}></HuePicker>
             </div>
             <div class="col-span-1 row-span-1 shadow-gray-400 shadow-sm">
               <HctCard color={color}></HctCard>
             </div>
           </div>
           <div>
-            <div>
-              hct( {Math.round(color.value[0] * 360)},
-              {Math.round(color.value[1] * 100)},
-              {Math.round(color.value[2] * 100)},{color.value[3]})
+            <div class="flex justify-center ">
+              hct(
+              <span class="inline-block w-8 text-right">
+                {Math.round(color.value[0] * 360)},
+              </span>
+              <span class="inline-block w-6 text-right">
+                {Math.round(color.value[1] * 100)},
+              </span>
+              <span class="inline-block w-6 text-right">
+                {Math.round(color.value[2] * 100)},
+              </span>
+              <span class="inline-block w-8 text-right">
+                {color.value[3].toFixed(2)}
+              </span>
+              )
             </div>
           </div>
         </div>
@@ -74,7 +79,7 @@ export const App = defineFunctionComponent(() => {
     render() {
       return (
         <div>
-          {getGreeting()}
+          <h1 class="flex justify-center leading-9">HCT Color Picker</h1>
           <div class="flex justify-center">
             <div class=" h-80 w-80">
               <ColorPicker></ColorPicker>

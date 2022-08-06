@@ -40,6 +40,10 @@ function clearContext(context2D: CanvasRenderingContext2D) {
   context2D.clearRect(0, 0, width, height)
 }
 
+function toRange(c: number) {
+  return Math.max(0, Math.min(c, 1))
+}
+
 export const CanvasPanel = defineFunctionComponent(
   (props: {
     imageBitmapRender?: (
@@ -82,13 +86,11 @@ export const CanvasPanel = defineFunctionComponent(
       updater()
     })
 
-    const changing = throttleFrame
-      ? throttle((x: number, y: number) => {
-          onMove?.(x, y, 'changing')
-        }, throttleFrame || 0)
-      : (x: number, y: number) => {
-          onMove?.(x, y, 'changing')
-        }
+    const move = (x: number, y: number) => {
+      onMove?.(toRange(x), toRange(y), 'changing')
+    }
+
+    const changing = throttleFrame ? throttle(move, throttleFrame || 0) : move
 
     return {
       render() {
@@ -103,10 +105,9 @@ export const CanvasPanel = defineFunctionComponent(
 
               canvas.setPointerCapture(event.pointerId)
 
-              onMove?.(
+              changing?.(
                 offsetX / canvas.clientWidth,
                 offsetY / canvas.clientHeight,
-                'start',
               )
             }}
             onPointermove={(event) => {
@@ -127,10 +128,9 @@ export const CanvasPanel = defineFunctionComponent(
 
               canvas.releasePointerCapture(event.pointerId)
 
-              onMove?.(
+              changing?.(
                 offsetX / canvas.clientWidth,
                 offsetY / canvas.clientHeight,
-                'end',
               )
             }}
           ></canvas>

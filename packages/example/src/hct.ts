@@ -6,6 +6,16 @@ import {
   redFromArgb,
 } from '@material/material-color-utilities'
 
+export enum EColorHCT {
+  hue,
+  chroma,
+  tone,
+  alpha,
+}
+export type TEColorHCT = typeof EColorHCT
+
+export type TMode = 'tone' | 'hue' | 'chroma' | 'alpha'
+
 export type TColorHCT = [
   hue: number,
   chroma: number,
@@ -39,8 +49,6 @@ export function getHctColor(hctPercent: TColorHCT) {
 
   return color
 }
-
-type TMode = 'tone' | 'hue' | 'chroma' | 'alpha'
 
 export function getModePixelColor(mode: TMode, percentX: number) {
   switch (mode) {

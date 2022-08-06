@@ -1,12 +1,13 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
 import { getGreeting } from '@template/template'
-import { computed, reactive, Ref, ref, watch } from 'vue'
+import { computed, Ref, ref, watch } from 'vue'
 import {
   getHctColor,
   getModePixelColor,
   getModePixelColorXY,
   rgbaFromHct,
   TColorHCT,
+  EColorHCT,
 } from './hct'
 import {
   alphaFromArgb,
@@ -85,7 +86,7 @@ export const CanvasPanel = defineFunctionComponent(
 )
 
 export const ColorPickerHue = defineFunctionComponent(
-  ({ color }: { color: Ref<TColorHCT> }) => {
+  ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
     const rgbaColor = computed(() => {
       const hctColor = getHctColor(color.value)
       const argb = rgbaFromHct(hctColor)
@@ -98,7 +99,11 @@ export const ColorPickerHue = defineFunctionComponent(
           <div class="h-full relative">
             <CanvasPanel
               onMove={(x, y) => {
-                color.value[0] = x
+                color.value.forEach((value, index) => {
+                  if (modes.includes(index)) {
+                    color.value[index] = y
+                  }
+                })
               }}
               imageBitmapRender={(imageData, width, height) => {
                 for (let x = 0; x < width; x++) {
@@ -125,7 +130,7 @@ export const ColorPickerHue = defineFunctionComponent(
 )
 
 export const ColorPickerHueChroma = defineFunctionComponent(
-  ({ color }: { color: Ref<TColorHCT> }) => {
+  ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
     const rgbaColor = computed(() => {
       const hctColor = getHctColor(color.value)
       const argb = rgbaFromHct(hctColor)
@@ -137,8 +142,11 @@ export const ColorPickerHueChroma = defineFunctionComponent(
         return (
           <CanvasPanel
             onMove={(x, y) => {
-              color.value[1] = x
-              color.value[2] = y
+              color.value.forEach((value, index) => {
+                if (modes.includes(index)) {
+                  color.value[index] = y
+                }
+              })
             }}
             imageBitmapRender={(imageData, width, height) => {
               for (let y = 0; y < height; y++) {
@@ -168,7 +176,7 @@ export const ColorPickerHueChroma = defineFunctionComponent(
 )
 
 export const ColorPickerAlpha = defineFunctionComponent(
-  ({ color }: { color: Ref<TColorHCT> }) => {
+  ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
     const rgbaColor = computed(() => {
       const hctColor = getHctColor(color.value)
       const argb = rgbaFromHct(hctColor)
@@ -180,7 +188,11 @@ export const ColorPickerAlpha = defineFunctionComponent(
         return (
           <CanvasPanel
             onMove={(x, y) => {
-              color.value[3] = y
+              color.value.forEach((value, index) => {
+                if (modes.includes(index)) {
+                  color.value[index] = y
+                }
+              })
             }}
             imageBitmapRender={(imageData, width, height) => {
               const color = getHctColor([0, 0.6, 0.7, 1])
@@ -228,13 +240,22 @@ export const ColorPicker = defineFunctionComponent(() => {
         <div class="h-full">
           <div class="h-full grid grid-cols-12 grid-rows-6">
             <div class="col-span-11 row-span-5 shadow-gray-400 shadow-sm">
-              <ColorPickerHueChroma color={color}></ColorPickerHueChroma>
+              <ColorPickerHueChroma
+                color={color}
+                modes={[EColorHCT.chroma, EColorHCT.tone]}
+              ></ColorPickerHueChroma>
             </div>
             <div class="col-span-1 row-span-5 shadow-gray-400 shadow-sm">
-              <ColorPickerAlpha color={color}></ColorPickerAlpha>
+              <ColorPickerAlpha
+                color={color}
+                modes={[EColorHCT.alpha]}
+              ></ColorPickerAlpha>
             </div>
             <div class="col-span-11 row-span-1 shadow-gray-400 shadow-sm">
-              <ColorPickerHue color={color}></ColorPickerHue>
+              <ColorPickerHue
+                color={color}
+                modes={[EColorHCT.hue]}
+              ></ColorPickerHue>
             </div>
           </div>
           <div>

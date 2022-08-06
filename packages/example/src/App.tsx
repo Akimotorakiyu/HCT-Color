@@ -1,11 +1,12 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
 import { getGreeting } from '@template/template'
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, Ref, ref, watch } from 'vue'
 import {
   getHctColor,
   getModePixelColor,
   getModePixelColorXY,
   rgbaFromHct,
+  TColorHCT,
 } from './hct'
 import {
   alphaFromArgb,
@@ -33,8 +34,9 @@ export const CanvasPanel = defineFunctionComponent(
       width: number,
       height: number,
     ) => ImageData
+    onMove?: (x: number, y: number) => void
   }) => {
-    const { imageBitmapRender } = props
+    const { imageBitmapRender, onMove } = props
     const canvas = ref<HTMLCanvasElement>()
     const context2D = computed(() => {
       return canvas.value?.getContext('2d')
@@ -57,107 +59,186 @@ export const CanvasPanel = defineFunctionComponent(
 
     return {
       render() {
-        return <canvas class="w-full h-full" ref={canvas}></canvas>
+        return (
+          <canvas
+            ref={canvas}
+            class="w-full h-full"
+            onClick={(event) => {
+              const { offsetX, target, offsetY } = event
+              event.offsetX
+
+              const canvas = target as HTMLCanvasElement
+              if (offsetX / canvas.clientWidth > 1) {
+                console.log('xxxx')
+              }
+
+              onMove?.(
+                offsetX / canvas.clientWidth,
+                offsetY / canvas.clientHeight,
+              )
+            }}
+          ></canvas>
+        )
       },
     }
   },
 )
 
-export const ColorPickerZ = defineFunctionComponent(() => {
-  return {
-    render() {
-      return (
-        <CanvasPanel
-          imageBitmapRender={(imageData, width, height) => {
-            for (let x = 0; x < width; x++) {
-              const color = getModePixelColor('tone', x / height)
+export const ColorPickerHue = defineFunctionComponent(
+  ({ color }: { color: Ref<TColorHCT> }) => {
+    const rgbaColor = computed(() => {
+      const hctColor = getHctColor(color.value)
+      const argb = rgbaFromHct(hctColor)
+
+      return argb
+    })
+    return {
+      render() {
+        return (
+          <div class="h-full relative">
+            <CanvasPanel
+              onMove={(x, y) => {
+                color.value[0] = x
+              }}
+              imageBitmapRender={(imageData, width, height) => {
+                for (let x = 0; x < width; x++) {
+                  const color = getModePixelColor('tone', x / height)
+                  for (let y = 0; y < height; y++) {
+                    const i = width * y * 4 + x * 4
+
+                    const argb = color.toInt()
+
+                    imageData.data[i + 0] = redFromArgb(argb) // R value
+                    imageData.data[i + 1] = greenFromArgb(argb) // G value
+                    imageData.data[i + 2] = blueFromArgb(argb) // B value
+                    imageData.data[i + 3] = alphaFromArgb(argb) // A value
+                  }
+                }
+                return imageData
+              }}
+            ></CanvasPanel>
+          </div>
+        )
+      },
+    }
+  },
+)
+
+export const ColorPickerHueChroma = defineFunctionComponent(
+  ({ color }: { color: Ref<TColorHCT> }) => {
+    const rgbaColor = computed(() => {
+      const hctColor = getHctColor(color.value)
+      const argb = rgbaFromHct(hctColor)
+
+      return argb
+    })
+    return {
+      render() {
+        return (
+          <CanvasPanel
+            onMove={(x, y) => {
+              color.value[1] = x
+              color.value[2] = y
+            }}
+            imageBitmapRender={(imageData, width, height) => {
               for (let y = 0; y < height; y++) {
-                const i = width * y * 4 + x * 4
+                for (let x = 0; x < width; x++) {
+                  const i = width * y * 4 + x * 4
 
-                const argb = color.toInt()
+                  const color = getModePixelColorXY(
+                    'tone',
+                    x / width,
+                    y / height,
+                  )
+                  const argb = color.toInt()
 
-                imageData.data[i + 0] = redFromArgb(argb) // R value
-                imageData.data[i + 1] = greenFromArgb(argb) // G value
-                imageData.data[i + 2] = blueFromArgb(argb) // B value
-                imageData.data[i + 3] = alphaFromArgb(argb) // A value
+                  imageData.data[i + 0] = redFromArgb(argb) // R value
+                  imageData.data[i + 1] = greenFromArgb(argb) // G value
+                  imageData.data[i + 2] = blueFromArgb(argb) // B value
+                  imageData.data[i + 3] = alphaFromArgb(argb) // A value
+                }
               }
-            }
-            return imageData
-          }}
-        ></CanvasPanel>
-      )
-    },
-  }
-})
+              return imageData
+            }}
+          ></CanvasPanel>
+        )
+      },
+    }
+  },
+)
 
-export const ColorPickerXY = defineFunctionComponent(() => {
-  return {
-    render() {
-      return (
-        <CanvasPanel
-          imageBitmapRender={(imageData, width, height) => {
-            for (let y = 0; y < height; y++) {
-              for (let x = 0; x < width; x++) {
-                const i = width * y * 4 + x * 4
+export const ColorPickerAlpha = defineFunctionComponent(
+  ({ color }: { color: Ref<TColorHCT> }) => {
+    const rgbaColor = computed(() => {
+      const hctColor = getHctColor(color.value)
+      const argb = rgbaFromHct(hctColor)
 
-                const color = getModePixelColorXY('tone', x / width, y / height)
-                const argb = color.toInt()
+      return argb
+    })
+    return {
+      render() {
+        return (
+          <CanvasPanel
+            onMove={(x, y) => {
+              color.value[3] = y
+            }}
+            imageBitmapRender={(imageData, width, height) => {
+              const color = getHctColor([0, 0.6, 0.7, 1])
+              const argb = rgbaFromHct(color)
+              console.log(argb)
 
-                imageData.data[i + 0] = redFromArgb(argb) // R value
-                imageData.data[i + 1] = greenFromArgb(argb) // G value
-                imageData.data[i + 2] = blueFromArgb(argb) // B value
-                imageData.data[i + 3] = alphaFromArgb(argb) // A value
+              for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                  const i = width * y * 4 + x * 4
+
+                  imageData.data[i + 0] = argb[0] // R value
+                  imageData.data[i + 1] = argb[1] // G value
+                  imageData.data[i + 2] = argb[2] // B value
+                  imageData.data[i + 3] = (y / height) * 255 // A value
+                }
               }
-            }
-            return imageData
-          }}
-        ></CanvasPanel>
-      )
-    },
-  }
-})
-
-export const ColorPickerAlpha = defineFunctionComponent(() => {
-  return {
-    render() {
-      return (
-        <CanvasPanel
-          imageBitmapRender={(imageData, width, height) => {
-            const color = getHctColor([0, 0.6, 0.7, 1])
-            const argb = rgbaFromHct(color)
-            console.log(argb)
-
-            for (let y = 0; y < height; y++) {
-              for (let x = 0; x < width; x++) {
-                const i = width * y * 4 + x * 4
-
-                imageData.data[i + 0] = argb[0] // R value
-                imageData.data[i + 1] = argb[1] // G value
-                imageData.data[i + 2] = argb[2] // B value
-                imageData.data[i + 3] = (y / height) * 255 // A value
-              }
-            }
-            return imageData
-          }}
-        ></CanvasPanel>
-      )
-    },
-  }
-})
+              return imageData
+            }}
+          ></CanvasPanel>
+        )
+      },
+    }
+  },
+)
 
 export const ColorPicker = defineFunctionComponent(() => {
+  const color = ref<TColorHCT>([0.5, 0.6, 0.7, 1])
+
+  const hctColor = computed(() => {
+    const hctColor = getHctColor(color.value)
+
+    return hctColor
+  })
+
+  const rgbaColor = computed(() => {
+    const hctColor = getHctColor(color.value)
+    const argb = rgbaFromHct(hctColor)
+
+    return argb
+  })
+
   return {
     render() {
       return (
-        <div class="h-full grid grid-cols-12 grid-rows-6">
-          <div class="col-span-11 row-span-5">
-            <ColorPickerXY></ColorPickerXY>
+        <div class="h-full">
+          <div class="h-full grid grid-cols-12 grid-rows-6">
+            <div class="col-span-11 row-span-5 shadow-gray-400 shadow-sm">
+              <ColorPickerHueChroma color={color}></ColorPickerHueChroma>
+            </div>
+            <div class="col-span-1 row-span-5 shadow-gray-400 shadow-sm">
+              <ColorPickerAlpha color={color}></ColorPickerAlpha>
+            </div>
+            <div class="col-span-11 row-span-1 shadow-gray-400 shadow-sm">
+              <ColorPickerHue color={color}></ColorPickerHue>
+            </div>
           </div>
-          <div class="col-span-1 row-span-5">
-            <ColorPickerAlpha></ColorPickerAlpha>
-          </div>
-          <div class="col-span-11 row-span-1 ">
-            <ColorPickerZ></ColorPickerZ>
+          <div>
+            {color.value[0]},{color.value[1]},{color.value[2]},{color.value[3]}
           </div>
         </div>
       )
@@ -171,8 +252,10 @@ export const App = defineFunctionComponent(() => {
       return (
         <div>
           {getGreeting()}
-          <div class=" h-80">
-            <ColorPicker></ColorPicker>
+          <div class="flex justify-center">
+            <div class=" h-80 w-80">
+              <ColorPicker></ColorPicker>
+            </div>
           </div>
         </div>
       )

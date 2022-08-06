@@ -6,7 +6,12 @@ import {
   redFromArgb,
 } from '@material/material-color-utilities'
 
-type TColorHCT = [R: number, G: number, B: number, A: number]
+export type TColorHCT = [
+  hue: number,
+  chroma: number,
+  tone: number,
+  alpha: number,
+]
 
 function getChanel(start: number, end: number, percent: number) {
   const length = end - start
@@ -22,7 +27,7 @@ export function rgbaFromHct(color: Hct) {
     greenFromArgb(argb),
     blueFromArgb(argb),
     alphaFromArgb(argb),
-  ]
+  ] as const
 }
 
 export function getHctColor(hctPercent: TColorHCT) {

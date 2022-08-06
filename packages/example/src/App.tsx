@@ -1,14 +1,7 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
 import { getGreeting } from '@template/template'
 import { computed, Ref, ref } from 'vue'
-import {
-  getHctColor,
-  getModePixelColor,
-  getModePixelColorXY,
-  rgbaFromHct,
-  TColorHCT,
-  EColorHCT,
-} from './hct'
+import { getHctColor, rgbaFromHct, TColorHCT, EColorHCT } from './hct'
 import {
   alphaFromArgb,
   blueFromArgb,
@@ -19,12 +12,6 @@ import { CanvasPanel } from './canvasPanel'
 
 export const ColorPickerHue = defineFunctionComponent(
   ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
-    const rgbaColor = computed(() => {
-      const hctColor = getHctColor(color.value)
-      const argb = rgbaFromHct(hctColor)
-
-      return argb
-    })
     return {
       render() {
         return (
@@ -39,7 +26,7 @@ export const ColorPickerHue = defineFunctionComponent(
               }}
               imageBitmapRender={(imageData, width, height) => {
                 for (let x = 0; x < width; x++) {
-                  const color = getModePixelColor('tone', x / height)
+                  const color = getHctColor([x / height, 1, 0.6, 1])
                   for (let y = 0; y < height; y++) {
                     const i = width * y * 4 + x * 4
 
@@ -61,14 +48,8 @@ export const ColorPickerHue = defineFunctionComponent(
   },
 )
 
-export const ColorPickerHueChroma = defineFunctionComponent(
+export const ColorPickerChromaTone = defineFunctionComponent(
   ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
-    const rgbaColor = computed(() => {
-      const hctColor = getHctColor(color.value)
-      const argb = rgbaFromHct(hctColor)
-
-      return argb
-    })
     return {
       render() {
         return (
@@ -85,11 +66,7 @@ export const ColorPickerHueChroma = defineFunctionComponent(
                 for (let x = 0; x < width; x++) {
                   const i = width * y * 4 + x * 4
 
-                  const color = getModePixelColorXY(
-                    'tone',
-                    x / width,
-                    y / height,
-                  )
+                  const color = getHctColor([0, x / width, y / height, 1])
                   const argb = color.toInt()
 
                   imageData.data[i + 0] = redFromArgb(argb) // R value
@@ -109,12 +86,6 @@ export const ColorPickerHueChroma = defineFunctionComponent(
 
 export const ColorPickerAlpha = defineFunctionComponent(
   ({ color, modes }: { color: Ref<TColorHCT>; modes: EColorHCT[] }) => {
-    const rgbaColor = computed(() => {
-      const hctColor = getHctColor(color.value)
-      const argb = rgbaFromHct(hctColor)
-
-      return argb
-    })
     return {
       render() {
         return (
@@ -172,10 +143,10 @@ export const ColorPicker = defineFunctionComponent(() => {
         <div class="h-full">
           <div class="h-full grid grid-cols-12 grid-rows-6">
             <div class="col-span-11 row-span-5 shadow-gray-400 shadow-sm">
-              <ColorPickerHueChroma
+              <ColorPickerChromaTone
                 color={color}
                 modes={[EColorHCT.chroma, EColorHCT.tone]}
-              ></ColorPickerHueChroma>
+              ></ColorPickerChromaTone>
             </div>
             <div class="col-span-1 row-span-5 shadow-gray-400 shadow-sm">
               <ColorPickerAlpha

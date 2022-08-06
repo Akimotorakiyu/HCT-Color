@@ -49,34 +49,3 @@ export function getHctColor(hctPercent: TColorHCT) {
 
   return color
 }
-
-export function getModePixelColor(mode: TMode, percentX: number) {
-  switch (mode) {
-    case 'tone':
-      return getHctColor([percentX, 1, 0.6, 1])
-    case 'alpha':
-      return getHctColor([1, 1, 0.6, percentX])
-
-      break
-
-    default:
-      break
-  }
-  return Hct.fromInt(0)
-}
-
-export function getModePixelColorXY(
-  mode: TMode,
-  percentX: number,
-  percentY: number,
-) {
-  switch (mode) {
-    case 'tone':
-      return getHctColor([0, percentX, percentY, 1])
-      break
-
-    default:
-      break
-  }
-  return Hct.fromInt(0)
-}

@@ -1,35 +1,8 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 
-function throttle<Args extends any[], T>(
-  func: (...args: Args) => T,
-  timeFrame: number,
-) {
-  let lastTime = 0
-
-  let hasSc = false
-
-  const runner = function (...args: Args) {
-    const now = Date.now()
-    if (now - lastTime >= timeFrame) {
-      hasSc = false
-      func(...args)
-      lastTime = now
-    } else {
-      if (hasSc) {
-        return
-      }
-      hasSc = true
-      setTimeout(() => {
-        if (!hasSc) {
-          runner(...args)
-        }
-      }, timeFrame - (now - lastTime))
-    }
-  }
-
-  return runner
-}
+import { Subject } from 'rxjs'
+import { throttleTime } from 'rxjs/operators'
 
 function renderData(context2D: CanvasRenderingContext2D, imageData: ImageData) {
   context2D.putImageData(imageData, 0, 0)
@@ -86,11 +59,15 @@ export const CanvasPanel = defineFunctionComponent(
       updater()
     })
 
-    const move = (x: number, y: number) => {
-      onMove?.(toRange(x), toRange(y), 'changing')
-    }
+    const sub = new Subject<[x: number, y: number]>()
 
-    const changing = throttleFrame ? throttle(move, throttleFrame || 0) : move
+    sub.pipe(throttleTime(throttleFrame || 50)).subscribe(([x, y]) => {
+      onMove?.(toRange(x), toRange(y), 'changing')
+    })
+
+    onUnmounted(() => {
+      sub.unsubscribe()
+    })
 
     return {
       render() {
@@ -105,20 +82,20 @@ export const CanvasPanel = defineFunctionComponent(
 
               canvas.setPointerCapture(event.pointerId)
 
-              changing?.(
+              sub.next([
                 offsetX / canvas.clientWidth,
                 offsetY / canvas.clientHeight,
-              )
+              ])
             }}
             onPointermove={(event) => {
               const canvas = event.target as HTMLCanvasElement
               const { offsetX, offsetY } = event
 
               if (canvas.hasPointerCapture(event.pointerId)) {
-                changing(
+                sub.next([
                   offsetX / canvas.clientWidth,
                   offsetY / canvas.clientHeight,
-                )
+                ])
               }
             }}
             onPointerup={(event) => {
@@ -128,10 +105,10 @@ export const CanvasPanel = defineFunctionComponent(
 
               canvas.releasePointerCapture(event.pointerId)
 
-              changing?.(
+              sub.next([
                 offsetX / canvas.clientWidth,
                 offsetY / canvas.clientHeight,
-              )
+              ])
             }}
           ></canvas>
         )

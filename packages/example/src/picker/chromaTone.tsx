@@ -1,7 +1,6 @@
 import { defineFunctionComponent } from '../func/defineFunctionComponent'
 import { Ref } from 'vue'
-import { TColorHCT, EColorHCT, calcHctColorAndToRgba } from '../hct'
-
+import { TColorHCT, calcHctColorAndToRgba } from '../hct'
 import { CanvasPanel } from '../canvasPanel'
 
 export const ChromaTonePicker = defineFunctionComponent(
@@ -10,7 +9,7 @@ export const ChromaTonePicker = defineFunctionComponent(
       render() {
         return (
           <CanvasPanel
-            throttleFrame={80}
+            throttleFrame={50}
             onMove={(x, y) => {
               color.value[1] = x
               color.value[2] = y

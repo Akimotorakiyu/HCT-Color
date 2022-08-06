@@ -33,6 +33,7 @@ importers:
       '@vue/compiler-sfc': ^3.2.37
       postcss: ^8.4.6
       postcss-nested: ^5.0.6
+      rxjs: 8.0.0-alpha.4
       vite: ^3.0.0
       vite-plugin-windicss: ^1.8.7
       vue: ^3.2.29
@@ -40,6 +41,7 @@ importers:
     dependencies:
       '@material/material-color-utilities': 0.2.0
       '@template/template': link:../template/template
+      rxjs: 8.0.0-alpha.4
       vue: 3.2.31
     devDependencies:
       '@vitejs/plugin-vue': 3.0.0_vite@3.0.0+vue@3.2.31
@@ -3430,6 +3432,15 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
+  /rxjs/8.0.0-alpha.4:
+    resolution:
+      {
+        integrity: sha512-Uabsjq+bvPxXehjd1MIU1sHXaimJZUcM1+D3NX5XE51owh+JKTBcegLOmbf66IYx92JzW6N3pfxiovwkPi/X3w==,
+      }
+    dependencies:
+      tslib: 2.4.0
+    dev: false
+
   /safe-buffer/5.1.2:
     resolution:
       {
@@ -3747,6 +3758,13 @@ packages:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
+
+  /tslib/2.4.0:
+    resolution:
+      {
+        integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==,
+      }
+    dev: false
 
   /type-fest/0.18.1:
     resolution:

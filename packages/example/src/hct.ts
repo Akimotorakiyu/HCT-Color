@@ -58,7 +58,7 @@ export function calcHctColorAndToRgba(
   >,
 ) {
   const key = `${Math.round(hctPercent[0] * 360 * 1)}-${Math.round(
-    hctPercent[1] * 100 * 1,
+    hctPercent[1] * 100 * 0.4,
   )}-${Math.round(hctPercent[2] * 100 * 1.6)}` as const
 
   const cached = cacheMap?.get(key)

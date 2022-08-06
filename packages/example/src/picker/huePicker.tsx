@@ -20,7 +20,7 @@ export const HuePicker = defineFunctionComponent(
               onMove={(x, y) => {
                 color.value.forEach((value, index) => {
                   if (modes.includes(index)) {
-                    color.value[index] = y
+                    color.value[index] = x
                   }
                 })
               }}

@@ -46,14 +46,34 @@ export const CanvasPanel = defineFunctionComponent(
           <canvas
             ref={canvas}
             class="w-full h-full"
-            onClick={(event) => {
-              const { offsetX, target, offsetY } = event
-              event.offsetX
+            onPointerdown={(event) => {
+              const { offsetX, offsetY } = event
 
-              const canvas = target as HTMLCanvasElement
-              if (offsetX / canvas.clientWidth > 1) {
-                console.log('xxxx')
+              const canvas = event.target as HTMLCanvasElement
+
+              canvas.setPointerCapture(event.pointerId)
+
+              onMove?.(
+                offsetX / canvas.clientWidth,
+                offsetY / canvas.clientHeight,
+              )
+            }}
+            onPointermove={(event) => {
+              const canvas = event.target as HTMLCanvasElement
+              if (canvas.hasPointerCapture(event.pointerId)) {
+                const { offsetX, offsetY } = event
+                onMove?.(
+                  offsetX / canvas.clientWidth,
+                  offsetY / canvas.clientHeight,
+                )
               }
+            }}
+            onPointerup={(event) => {
+              const { offsetX, offsetY } = event
+
+              const canvas = event.target as HTMLCanvasElement
+
+              canvas.releasePointerCapture(event.pointerId)
 
               onMove?.(
                 offsetX / canvas.clientWidth,

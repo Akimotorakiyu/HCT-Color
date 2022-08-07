@@ -29,15 +29,19 @@ function getChanel(start: number, end: number, percent: number) {
   return res
 }
 
-export function rgbaFromHct(color: Hct) {
-  const argb = color.toInt()
-
+export function rgbaFromInt(argb: number) {
   return [
     redFromArgb(argb),
     greenFromArgb(argb),
     blueFromArgb(argb),
     alphaFromArgb(argb),
   ] as const
+}
+
+export function rgbaFromHct(color: Hct) {
+  const argb = color.toInt()
+
+  return rgbaFromInt(argb)
 }
 
 export function getHctColor(hctPercent: TColorHCT) {

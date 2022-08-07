@@ -1,43 +1,16 @@
 import { defineFunctionComponent } from './func/defineFunctionComponent'
-import { computed, ref, Ref } from 'vue'
-import { TColorHCT, getHctColor, rgbaFromHct } from './hct'
+import { ref } from 'vue'
+import { TColorHCT } from './hct'
 import { ChromaTonePicker } from './picker/chromaTone'
 import { AlphaPicker } from './picker/alphaPicker'
 import { HuePicker } from './picker/huePicker'
-
-export const HctCard = defineFunctionComponent(
-  (props: { color: Ref<TColorHCT> }) => {
-    const { color } = props
-    const rgbaColor = computed(() => {
-      const hctColor = getHctColor(color.value)
-      const rgbaColor = rgbaFromHct(hctColor)
-      return rgbaColor
-    })
-    return {
-      render() {
-        return (
-          <div
-            class="w-full h-full"
-            style={{
-              'background-image':
-                'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADBJREFUOE9jfPbs2X8GPEBSUhKfNAPjqAHDIgz+//+PNx08f/4cfzoYNYCBceiHAQC5flV5JzgrxQAAAABJRU5ErkJggg==")',
-            }}
-          >
-            <div
-              class="w-full h-full"
-              style={{
-                backgroundColor: `rgba(${rgbaColor.value[0]},${rgbaColor.value[1]},${rgbaColor.value[2]},${color.value[3]})`,
-              }}
-            ></div>
-          </div>
-        )
-      },
-    }
-  },
-)
+import { HctCard } from './card'
+import { Theme } from './theme'
 
 export const ColorPicker = defineFunctionComponent(() => {
   const color = ref<TColorHCT>([0.5, 0.6, 0.7, 1])
+
+  const showTheme = ref(false)
 
   return {
     render() {
@@ -75,6 +48,17 @@ export const ColorPicker = defineFunctionComponent(() => {
               )
             </div>
           </div>
+          <div class="flex justify-center my-4">
+            <button
+              class=" shadow-sm shadow-gray-300 bg-blue-500 text-light-50 rounded px-4 py-1"
+              onClick={() => {
+                showTheme.value = !showTheme.value
+              }}
+            >
+              {showTheme.value ? 'show theme ' : 'hide theme'}
+            </button>
+          </div>
+          {showTheme.value && <Theme color={color}></Theme>}
         </div>
       )
     },
@@ -90,6 +74,7 @@ export const App = defineFunctionComponent(() => {
           <div class="flex justify-center">
             <ColorPicker></ColorPicker>
           </div>
+          <div></div>
           <div class="flex justify-center">
             <a
               href="https://github.com/Akimotorakiyu/HCT-Color"

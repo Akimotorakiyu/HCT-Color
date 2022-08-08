@@ -74,7 +74,13 @@ export const CanvasPanel = defineFunctionComponent(
         return (
           <canvas
             ref={canvas}
-            class="w-full h-full"
+            class="w-full h-full select-none"
+            onTouchstart={(e) => {
+              e.preventDefault()
+            }}
+            onTouchmove={(e) => {
+              e.preventDefault()
+            }}
             onPointerdown={(event) => {
               const { offsetX, offsetY } = event
 
@@ -86,6 +92,8 @@ export const CanvasPanel = defineFunctionComponent(
                 offsetX / canvas.clientWidth,
                 offsetY / canvas.clientHeight,
               ])
+
+              event.preventDefault()
             }}
             onPointermove={(event) => {
               const canvas = event.target as HTMLCanvasElement
@@ -96,6 +104,7 @@ export const CanvasPanel = defineFunctionComponent(
                   offsetX / canvas.clientWidth,
                   offsetY / canvas.clientHeight,
                 ])
+                event.preventDefault()
               }
             }}
             onPointerup={(event) => {
